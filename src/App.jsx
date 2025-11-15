@@ -1,18 +1,12 @@
-import React from "react"
-import Navbar from "./Components/Navbar";
-import Hero from "./Components/Hero";
-import SecondPage from "./Components/SecondPage";
-function App(){
-return (
-  <div>
-<Navbar/>
+import React from 'react'
+import Userland from './Pages/Users/Userland'
 
-<Hero/>
-
-<SecondPage/>
-  </div>
-
-);
+function App() {
+  return (
+    <div>
+    <Userland/>
+    </div>
+  )
 }
 
-export default App;
+export default App
