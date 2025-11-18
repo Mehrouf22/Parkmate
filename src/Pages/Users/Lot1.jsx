@@ -1,0 +1,193 @@
+import React, { useEffect, useState, useRef } from 'react'
+import { Link } from 'react-router-dom'
+import './Lot1.scss'
+
+const STORAGE_KEY = 'parkmate_lot1_slots'
+const ONE_HOUR_MS = 60 * 60 * 1000
+
+function formatRemaining(ms) {
+  if (ms <= 0) return '00:00:00'
+  const total = Math.floor(ms / 1000)
+  const h = Math.floor(total / 3600)
+  const m = Math.floor((total % 3600) / 60)
+  const s = total % 60
+  return [h, m, s].map((n) => String(n).padStart(2, '0')).join(':')
+}
+
+const Lot1 = () => {
+  const [slots, setSlots] = useState(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      if (raw) return JSON.parse(raw)
+    } catch (e) {}
+    return Array.from({ length: 10 }).map((_, i) => ({ id: i + 1, status: 'available', bookedAt: null }))
+  })
+
+  const [selected, setSelected] = useState(null)
+  const [payment, setPayment] = useState('card')
+  const [now, setNow] = useState(Date.now())
+  const timeoutsRef = useRef({})
+
+  const hasAnyBooking = slots.some((s) => !!s.bookedAt)
+
+  // tick every second to update remaining times
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(t)
+  }, [])
+
+  // persist slots
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(slots))
+    } catch (e) {}
+  }, [slots])
+
+  // set timeouts for booked slots (for notification & auto-release)
+  useEffect(() => {
+    // clear existing
+    Object.values(timeoutsRef.current).forEach((id) => clearTimeout(id))
+    timeoutsRef.current = {}
+
+    slots.forEach((s) => {
+      if (s.bookedAt) {
+        const elapsed = Date.now() - s.bookedAt
+        const remaining = ONE_HOUR_MS - elapsed
+        if (remaining <= 0) {
+          // release immediately
+          releaseSlot(s.id)
+        } else {
+          const to = setTimeout(() => {
+            releaseSlot(s.id)
+            notify(`Booking ended for slot #${s.id}`)
+          }, remaining)
+          timeoutsRef.current[s.id] = to
+        }
+      }
+    })
+
+    return () => {
+      Object.values(timeoutsRef.current).forEach((id) => clearTimeout(id))
+      timeoutsRef.current = {}
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slots])
+
+  const selectSlot = (id) => {
+    const s = slots.find((x) => x.id === id)
+    if (!s || s.status === 'booked') return
+    setSelected(id)
+  }
+
+  const notify = (text) => {
+    try {
+      if (window.Notification && Notification.permission === 'granted') {
+        new Notification('PARKMATE', { body: text })
+      } else if (window.Notification && Notification.permission !== 'denied') {
+        Notification.requestPermission().then((p) => {
+          if (p === 'granted') new Notification('PARKMATE', { body: text })
+          else alert(text)
+        })
+      } else {
+        alert(text)
+      }
+    } catch (e) {
+      // fallback
+      alert(text)
+    }
+  }
+
+  const getClientId = () => {
+    const KEY = 'parkmate_client_id'
+    try {
+      let id = localStorage.getItem(KEY)
+      if (!id) {
+        id = 'c-' + Math.random().toString(36).slice(2, 10)
+        localStorage.setItem(KEY, id)
+      }
+      return id
+    } catch (e) {
+      return 'c-unknown'
+    }
+  }
+
+  const bookSlot = () => {
+    if (!selected) return alert('Please select a slot first')
+    const slot = slots.find((s) => s.id === selected)
+    if (!slot || slot.status === 'booked') return alert('Slot already booked')
+
+    const ok = window.confirm(`Pay using ${payment} and confirm booking for slot #${selected}?`)
+    if (!ok) return
+
+    const bookedAt = Date.now()
+    const clientId = getClientId()
+    setSlots((prev) => prev.map((s) => (s.id === selected ? { ...s, status: 'booked', bookedAt, bookedBy: clientId } : s)))
+    setSelected(null)
+    notify(`Slot #${selected} booked for 1 hour.`)
+  }
+
+  const releaseSlot = (id) => {
+    setSlots((prev) => prev.map((s) => (s.id === id ? { ...s, status: 'available', bookedAt: null } : s)))
+    // clear any timeout
+    if (timeoutsRef.current[id]) {
+      clearTimeout(timeoutsRef.current[id])
+      delete timeoutsRef.current[id]
+    }
+  }
+
+  const resetBookings = () => {
+    if (!window.confirm('Reset all bookings for Lot 1?')) return
+    const fresh = Array.from({ length: 10 }).map((_, i) => ({ id: i + 1, status: 'available', bookedAt: null }))
+    setSlots(fresh)
+    setSelected(null)
+  }
+
+  return (
+    <div className="lot1-demo lot1-root">
+      <h1>Lot 1 — Book a Slot</h1>
+
+      <p className="lot-desc">Select an available slot below. Bookings last 1 hour and will expire automatically.</p>
+
+      <div className="slots-grid">
+        {slots.map((s) => {
+          const remaining = s.bookedAt ? ONE_HOUR_MS - (now - s.bookedAt) : null
+          return (
+            <button
+              key={s.id}
+              className={`slot ${s.bookedAt ? 'booked' : 'available'} ${selected === s.id ? 'selected' : ''}`}
+              onClick={() => selectSlot(s.id)}
+              disabled={!!s.bookedAt}
+            >
+              <div className="slot-id">#{s.id}</div>
+              <div className="slot-state">{s.bookedAt ? `Booked — ${formatRemaining(remaining)}` : 'Available'}</div>
+            </button>
+          )
+        })}
+      </div>
+
+      <div className="controls">
+        <div className="payment-choice">
+          <label>
+            <input type="radio" name="pay" value="card" checked={payment === 'card'} onChange={() => setPayment('card')} /> Card
+          </label>
+          <label>
+            <input type="radio" name="pay" value="wallet" checked={payment === 'wallet'} onChange={() => setPayment('wallet')} /> Wallet
+          </label>
+          <label>
+            <input type="radio" name="pay" value="cash" checked={payment === 'cash'} onChange={() => setPayment('cash')} /> Cash
+          </label>
+        </div>
+
+        <div className="actions">
+          <button className="btn primary" onClick={bookSlot}>Book Selected Slot</button>
+          <button className="btn ghost" onClick={resetBookings}>Reset</button>
+          {hasAnyBooking && (
+            <Link to="/profile" className="btn ghost" style={{ marginLeft: 8 }}>Profile</Link>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Lot1
