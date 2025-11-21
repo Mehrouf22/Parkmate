@@ -13,11 +13,11 @@ const Userland = () => {
         </div>
         <div id="box2">
           <h4>Parking made Simple</h4>
-          <p>Plan ahead and save time with 
-            seamless parking finds. Whether you're 
-            heading to college or downtown, 
+          <p>Plan ahead and save time with
+            seamless parking finds. Whether you're
+            heading to college or downtown,
             get a spot ready before you arrive.</p>
-            
+
           <button onClick={() => navigate('/lots')}>Book Now</button>
         </div>
       </div>
