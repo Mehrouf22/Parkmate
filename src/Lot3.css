@@ -40,10 +40,10 @@ html, body {
 }
 
 .slot {
-  background: #f8fbff;
+  background: var(--card);
   border-radius: 10px;
   padding: 18px;
-  border: 1px solid rgba(6, 8, 20, 0.04);
+  border: 1px solid rgba(2, 6, 23, 0.04);
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -56,8 +56,8 @@ html, body {
 }
 
 .slot.booked {
-  background: linear-gradient(90deg, #10b981, #34d399);
-  color: #04201a;
+  background: linear-gradient(90deg, var(--success), #34d399);
+  color: #fff;
   cursor: not-allowed;
 }
 
@@ -68,12 +68,18 @@ html, body {
 .slot-id {
   font-weight: 700;
   font-size: 1.05rem;
+  color: var(--text);
 }
 
 .slot-state {
   font-size: 0.85rem;
-  color: #04201a;
+  color: var(--text);
   margin-top: 6px;
+}
+
+.slot.booked .slot-id,
+.slot.booked .slot-state {
+  color: #fff;
 }
 
 .controls {
@@ -87,7 +93,7 @@ html, body {
 
 .payment-choice label {
   margin-right: 12px;
-  color: #0b2545;
+  color: var(--text);
 }
 
 .actions .btn {
@@ -103,7 +109,7 @@ html, body {
 
 .btn.ghost {
   background: transparent;
-  border: 1px solid rgba(6, 8, 20, 0.06);
+  border: 1px solid rgba(2, 6, 23, 0.06);
 }
 
 /* page background & typography */

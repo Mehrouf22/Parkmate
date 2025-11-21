@@ -4,12 +4,34 @@ import './Navbar.css'
 
 const Navbar = () => {
   const [open, setOpen] = useState(false)
+  const [hasBooking, setHasBooking] = useState(false)
+  
   const location = useLocation()
 
   // close mobile menu when route changes
   useEffect(() => {
     setOpen(false)
   }, [location.pathname])
+
+  // detect whether the current client has any booking to show Services link
+  useEffect(() => {
+    try {
+      const client = localStorage.getItem('parkmate_client_id')
+      if (!client) return setHasBooking(false)
+      const keys = ['parkmate_lot1_slots','parkmate_lot2_slots','parkmate_lot3_slots']
+      const any = keys.some((k) => {
+        const raw = localStorage.getItem(k)
+        if (!raw) return false
+        try {
+          const arr = JSON.parse(raw)
+          return arr.some((s) => s && s.bookedBy === client)
+        } catch (e) { return false }
+      })
+      setHasBooking(!!any)
+    } catch (e) { setHasBooking(false) }
+  }, [location.pathname])
+
+  
 
   return (
     <header id="Nav">
@@ -34,6 +56,7 @@ const Navbar = () => {
           <Link to="/#about" className="nav-link">About</Link>
           <Link to="/lots" className="nav-link">Lots</Link>
           <Link to="/profile" className="nav-link">Profile</Link>
+          {hasBooking && <Link to="/service" className="nav-link">Services</Link>}
         </nav>
 
         {/* backdrop closes the menu when clicking outside on mobile */}

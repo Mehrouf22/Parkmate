@@ -30,15 +30,16 @@
   padding: 12px;
   border-radius: 10px;
   background: var(--card);
-  box-shadow: 0 10px 26px rgba(2, 6, 23, 0.18);
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.06);
+  border-left: 6px solid transparent;
 }
 
 .card.you {
-  border-left: 6px solid var(--accent-1);
+  border-left-color: var(--success);
 }
 
 .card.other {
-  border-left: 6px solid var(--danger);
+  border-left-color: var(--danger);
 }
 
 .card-left {
@@ -54,9 +55,47 @@
   color: var(--muted);
 }
 
-.card-right .time {
-  color: #ffffff; /* ensure time/date text is white */
+.card-right {
+  text-align: right;
 }
+
+.card-right .time {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.card-right .remaining {
+  margin-top: 6px;
+}
+
+.card-right .countdown {
+  font-weight: 700;
+  color: var(--text);
+  background: rgba(127,90,240,0.06);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.card-right .expired {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* Badge */
+.badge{
+  display:inline-block;margin-left:8px;background:var(--accent-1);color:#fff;font-size:0.75rem;padding:4px 8px;border-radius:999px;font-weight:700;vertical-align:middle
+}
+
+/* Progress bar */
+.progress{height:8px;background:rgba(2,6,23,0.03);border-radius:8px;margin-top:8px;overflow:hidden}
+.progress .fill{height:100%;background:linear-gradient(90deg,var(--accent-1),var(--success));width:0;transition:width .6s linear}
+
+.card.other .progress .fill{background:linear-gradient(90deg,#fb7185,#ef4444)}
+.card.you .progress .fill{background:linear-gradient(90deg,var(--success),#34d399)}
+
+/* Countdown color states */
+.countdown.warning{color:#b45309;background:rgba(245,158,11,0.06)}
+.countdown.critical{color:var(--danger);background:rgba(239,68,68,0.06)}
 
 .empty {
   padding: 12px;

@@ -12,9 +12,9 @@ const Lots = () => {
           <img src="src/assets/imgd/Screenshot 2025-11-15 042022.png" alt="" />
 
           <div id="buttons">
-            <button onClick={() => navigate('/lots/1')}>Lot-1</button>
-            <button onClick={() => navigate('/lots/2')}>Lot-2</button>
-            <button onClick={() => navigate('/lots/3')}>Lot-3</button>
+            <button className="btn primary" onClick={() => navigate('/lots/1')}>Lot-1</button>
+            <button className="btn primary" onClick={() => navigate('/lots/2')}>Lot-2</button>
+            <button className="btn primary" onClick={() => navigate('/lots/3')}>Lot-3</button>
           </div>
         </div>
       </div>

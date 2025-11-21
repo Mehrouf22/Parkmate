@@ -119,6 +119,27 @@ const Lot2 = () => {
     }
   }
 
+  const getClientId = () => {
+    const KEY = 'parkmate_client_id'
+    try {
+      let id = localStorage.getItem(KEY)
+      if (!id) {
+        id = 'c-' + Math.random().toString(36).slice(2, 10)
+        localStorage.setItem(KEY, id)
+      }
+      return id
+    } catch (e) {
+      return 'c-unknown'
+    }
+  }
+
+  const clientBookedSlot = () => {
+    try {
+      const cid = getClientId()
+      return slots.find((s) => s.bookedBy === cid) || null
+    } catch (e) { return null }
+  }
+
   const resetBookings = () => {
     if (!window.confirm('Reset all bookings for Lot 2?')) return
     const fresh = Array.from({ length: 10 }).map((_, i) => ({ id: i + 1, status: 'available', bookedAt: null }))
@@ -167,6 +188,9 @@ const Lot2 = () => {
           <button className="btn ghost" onClick={resetBookings}>Reset</button>
           {hasAnyBooking && (
             <Link to="/profile" className="btn ghost" style={{ marginLeft: 8 }}>Profile</Link>
+          )}
+          {clientBookedSlot() && (
+            <Link to="/service?lot=2" className="btn primary" style={{ marginLeft: 8 }}>Book Service</Link>
           )}
         </div>
       </div>

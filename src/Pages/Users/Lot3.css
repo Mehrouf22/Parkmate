@@ -1,3 +1,44 @@
+.lot1-root {
+  padding: 28px 0;
+}
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.slot {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e6e6e6;
+  background: var(--card);
+  cursor: pointer;
+}
+
+.slot.booked {
+  background: #2a9d55;
+  color: #fff;
+  cursor: default;
+}
+
+.slot.selected {
+  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.06);
+  border-color: var(--accent);
+}
+
+.controls {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.payment-choice label {
+  margin-right: 10px;
+}
+
 .lot1-demo h1 {
   color: #7f5af0;
   font-size: 2.5rem;
@@ -45,12 +86,12 @@ html, body {
   background: var(--card);
   border-radius: 12px;
   padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(2, 6, 23, 0.04);
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.12);
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
 }
 
 .slot:hover {
@@ -71,11 +112,12 @@ html, body {
 .slot-id {
   font-weight: 700;
   font-size: 1.05rem;
+  color: var(--text);
 }
 
 .slot-state {
   font-size: 0.9rem;
-  color: #ffffff;
+  color: var(--text);
   margin-top: 6px;
   opacity: 0.95;
 }
@@ -91,7 +133,7 @@ html, body {
 
 .payment-choice label {
   margin-right: 12px;
-  color: #fff;
+  color: var(--text);
 }
 
 .actions .btn {
@@ -107,7 +149,12 @@ html, body {
 
 .btn.ghost {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(2, 6, 23, 0.06);
+}
+
+.slot.booked .slot-id,
+.slot.booked .slot-state {
+  color: #fff;
 }
 
 /* page background & typography */

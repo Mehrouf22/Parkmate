@@ -126,6 +126,27 @@ const Lot3 = () => {
     setSelected(null)
   }
 
+  const getClientId = () => {
+    const KEY = 'parkmate_client_id'
+    try {
+      let id = localStorage.getItem(KEY)
+      if (!id) {
+        id = 'c-' + Math.random().toString(36).slice(2, 10)
+        localStorage.setItem(KEY, id)
+      }
+      return id
+    } catch (e) {
+      return 'c-unknown'
+    }
+  }
+
+  const clientBookedSlot = () => {
+    try {
+      const cid = getClientId()
+      return slots.find((s) => s.bookedBy === cid) || null
+    } catch (e) { return null }
+  }
+
   return (
     <div className="lot1-demo lot1-root">
       <h1>Lot 3 — Book a Slot</h1>
@@ -167,6 +188,9 @@ const Lot3 = () => {
           <button className="btn ghost" onClick={resetBookings}>Reset</button>
           {hasAnyBooking && (
             <Link to="/profile" className="btn ghost" style={{ marginLeft: 8 }}>Profile</Link>
+          )}
+          {clientBookedSlot() && (
+            <Link to="/service?lot=3" className="btn primary" style={{ marginLeft: 8 }}>Book Service</Link>
           )}
         </div>
       </div>

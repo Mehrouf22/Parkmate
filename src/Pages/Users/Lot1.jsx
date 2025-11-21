@@ -111,6 +111,13 @@ const Lot1 = () => {
     }
   }
 
+  const clientBookedSlot = () => {
+    try {
+      const cid = getClientId()
+      return slots.find((s) => s.bookedBy === cid) || null
+    } catch (e) { return null }
+  }
+
   const bookSlot = () => {
     if (!selected) return alert('Please select a slot first')
     const slot = slots.find((s) => s.id === selected)
@@ -183,6 +190,10 @@ const Lot1 = () => {
           <button className="btn ghost" onClick={resetBookings}>Reset</button>
           {hasAnyBooking && (
             <Link to="/profile" className="btn ghost" style={{ marginLeft: 8 }}>Profile</Link>
+          )}
+          {/* show Book Service for clients who have a booked slot in this lot */}
+          {clientBookedSlot() && (
+            <Link to="/service?lot=1" className="btn primary" style={{ marginLeft: 8 }}>Book Service</Link>
           )}
         </div>
       </div>

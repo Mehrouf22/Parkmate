@@ -2,6 +2,17 @@
 import React, { useEffect, useState } from 'react'
 import './Userprof.scss'
 
+const ONE_HOUR_MS = 60 * 60 * 1000
+
+function formatRemaining(ms) {
+  if (ms <= 0) return '00:00:00'
+  const total = Math.floor(ms / 1000)
+  const h = Math.floor(total / 3600)
+  const m = Math.floor((total % 3600) / 60)
+  const s = total % 60
+  return [h, m, s].map((n) => String(n).padStart(2, '0')).join(':')
+}
+
 const LOT_KEYS = [
   { key: 'parkmate_lot1_slots', label: 'Lot 1' },
   { key: 'parkmate_lot2_slots', label: 'Lot 2' },
@@ -30,6 +41,7 @@ function formatDate(ts) {
 
 export default function Userprof() {
   const [bookings, setBookings] = useState([])
+  const [now, setNow] = useState(Date.now())
 
   useEffect(() => {
     const id = clientId()
@@ -58,6 +70,12 @@ export default function Userprof() {
     setBookings(all.map((b) => ({ ...b, owner: b.bookedBy === id ? 'you' : 'other' })))
   }, [])
 
+  // tick every second so remaining timers update
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(t)
+  }, [])
+
   return (
     <div className="userprof-root">
       <h2>Your Profile</h2>
@@ -70,13 +88,31 @@ export default function Userprof() {
           {bookings
             .filter((b) => b.owner === 'you')
             .map((b) => (
-              <div className="card you" key={`${b.lot}-${b.slot}`}>
+              <div className={"card you"} key={`${b.lot}-${b.slot}`}>
                 <div className="card-left">
-                  <div className="lot-label">{b.lot}</div>
+                  <div className="lot-label">
+                    {b.lot} {b.owner === 'you' && <span className="badge">You</span>}
+                  </div>
                   <div className="slot-label">Slot #{b.slot}</div>
                 </div>
                 <div className="card-right">
                   <div className="time">{formatDate(b.bookedAt)}</div>
+                  <div className="progress" aria-hidden>
+                    {(() => {
+                      const elapsed = b.bookedAt ? now - b.bookedAt : 0
+                      const pct = Math.max(0, Math.min(100, (elapsed / ONE_HOUR_MS) * 100))
+                      return <div className="fill" style={{ width: `${pct}%` }} />
+                    })()}
+                  </div>
+                  <div className="remaining">
+                    {(() => {
+                      const remaining = b.bookedAt ? ONE_HOUR_MS - (now - b.bookedAt) : 0
+                      if (remaining <= 0) return <span className="expired">Expired</span>
+                      const warn = remaining <= 10 * 60 * 1000
+                      const critical = remaining <= 60 * 1000
+                      return <span className={`countdown ${warn ? 'warning' : ''} ${critical ? 'critical' : ''}`}>{formatRemaining(remaining)}</span>
+                    })()}
+                  </div>
                 </div>
               </div>
             ))}
@@ -90,13 +126,29 @@ export default function Userprof() {
           {bookings
             .filter((b) => b.owner === 'other')
             .map((b) => (
-              <div className="card other" key={`${b.lot}-${b.slot}`}>
+              <div className={"card other"} key={`${b.lot}-${b.slot}`}>
                 <div className="card-left">
                   <div className="lot-label">{b.lot}</div>
                   <div className="slot-label">Slot #{b.slot}</div>
                 </div>
                 <div className="card-right">
                   <div className="time">{formatDate(b.bookedAt)}</div>
+                  <div className="progress" aria-hidden>
+                    {(() => {
+                      const elapsed = b.bookedAt ? now - b.bookedAt : 0
+                      const pct = Math.max(0, Math.min(100, (elapsed / ONE_HOUR_MS) * 100))
+                      return <div className="fill" style={{ width: `${pct}%` }} />
+                    })()}
+                  </div>
+                  <div className="remaining">
+                    {(() => {
+                      const remaining = b.bookedAt ? ONE_HOUR_MS - (now - b.bookedAt) : 0
+                      if (remaining <= 0) return <span className="expired">Expired</span>
+                      const warn = remaining <= 10 * 60 * 1000
+                      const critical = remaining <= 60 * 1000
+                      return <span className={`countdown ${warn ? 'warning' : ''} ${critical ? 'critical' : ''}`}>{formatRemaining(remaining)}</span>
+                    })()}
+                  </div>
                 </div>
               </div>
             ))}
