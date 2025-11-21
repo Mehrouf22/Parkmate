@@ -59,10 +59,11 @@ export default function Userprof() {
               slot: s.id,
               bookedAt: s.bookedAt,
               bookedBy: s.bookedBy || null,
+              vehicleType: s.vehicleType || null,
             })
           }
         })
-      } catch (e) {}
+      } catch (e) { }
     })
 
     // sort by bookedAt desc
@@ -104,6 +105,7 @@ export default function Userprof() {
                     {b.lot} {b.owner === 'you' && <span className="badge">You</span>}
                   </div>
                   <div className="slot-label">Slot #{b.slot}</div>
+                  {b.vehicleType && <div className="vehicle-label">{b.vehicleType}</div>}
                 </div>
                 <div className="card-right">
                   <div className="time">{formatDate(b.bookedAt)}</div>

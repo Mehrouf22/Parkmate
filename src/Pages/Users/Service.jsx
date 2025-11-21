@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import './Service.scss'
 
-const SERVICES = [
-  { id: 'interior', title: 'Interior Wash', desc: 'Thorough vacuuming, wipe down, and interior detailing.' },
-  { id: 'exterior', title: 'Exterior Wash', desc: 'Exterior shampoo, wheel clean and rim shine.' },
-  { id: 'full', title: 'Full Wash', desc: 'Interior + Exterior combo for a complete clean.' },
+const DEFAULT_SERVICES = [
+  { id: 'interior', title: 'Interior Wash', desc: 'Thorough vacuuming, wipe down, and interior detailing.', price: 500 },
+  { id: 'exterior', title: 'Exterior Wash', desc: 'Exterior shampoo, wheel clean and rim shine.', price: 300 },
+  { id: 'full', title: 'Full Wash', desc: 'Interior + Exterior combo for a complete clean.', price: 750 },
 ]
 
 function getClientId() {
@@ -28,7 +28,18 @@ export default function Service() {
 
   const [bookings, setBookings] = useState([])
   const [selectedBooking, setSelectedBooking] = useState(null)
-  const [selectedService, setSelectedService] = useState('interior')
+  const [selectedService, setSelectedService] = useState(null)
+  const [services, setServices] = useState(DEFAULT_SERVICES)
+
+  useEffect(() => {
+    const stored = localStorage.getItem('parkmate_services_config')
+    if (stored) {
+      setServices(JSON.parse(stored))
+      setSelectedService(JSON.parse(stored)[0]?.id)
+    } else {
+      setSelectedService(DEFAULT_SERVICES[0].id)
+    }
+  }, [])
 
   useEffect(() => {
     const id = getClientId()
@@ -48,7 +59,7 @@ export default function Service() {
             all.push({ lot: k.label, lotIndex: k.idx, slot: s.id, bookedAt: s.bookedAt })
           }
         })
-      } catch (e) {}
+      } catch (e) { }
     })
     setBookings(all)
     if (all.length === 1) setSelectedBooking(all[0])
@@ -60,7 +71,7 @@ export default function Service() {
 
   const bookService = () => {
     if (!selectedBooking) return alert('Select a booking first')
-    const svc = SERVICES.find((s) => s.id === selectedService)
+    const svc = services.find((s) => s.id === selectedService)
     if (!svc) return
 
     const item = {
@@ -79,7 +90,7 @@ export default function Service() {
       const arr = raw ? JSON.parse(raw) : []
       arr.push(item)
       localStorage.setItem('parkmate_services', JSON.stringify(arr))
-    } catch (e) {}
+    } catch (e) { }
 
     alert(`Service '${svc.title}' booked for ${selectedBooking.lot} slot #${selectedBooking.slot}`)
     navigate('/profile')
@@ -116,10 +127,11 @@ export default function Service() {
         <div className="services-list">
           <h4>Available Services</h4>
           <div className="cards">
-            {SERVICES.map((s) => (
+            {services.map((s) => (
               <div key={s.id} className={`svc-card ${selectedService === s.id ? 'selected' : ''}`} onClick={() => setSelectedService(s.id)}>
                 <div className="svc-title">{s.title}</div>
                 <div className="svc-desc">{s.desc}</div>
+                <div className="svc-price">₹{s.price}</div>
                 <div className="svc-choose">{selectedService === s.id ? 'Selected' : 'Choose'}</div>
               </div>
             ))}
@@ -134,4 +146,4 @@ export default function Service() {
     </div>
   )
 }
- 
+
