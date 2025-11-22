@@ -24,6 +24,7 @@ import UserLogin from './Pages/Auth/UserLogin'
 import UserRegister from './Pages/Auth/UserRegister'
 import OwnerLogin from './Pages/Auth/OwnerLogin'
 import OwnerRegister from './Pages/Auth/OwnerRegister'
+import EmployeeRegister from './Pages/Auth/EmployeeRegister'
 import AdminLogin from './Pages/Auth/AdminLogin'
 
 import { DataProvider } from './Context/DataContext'
@@ -44,6 +45,7 @@ function App() {
                 <Route path="/register" element={<UserRegister />} />
                 <Route path="/owner/login" element={<OwnerLogin />} />
                 <Route path="/owner/register" element={<OwnerRegister />} />
+                <Route path="/employee/register" element={<EmployeeRegister />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
 
                 <Route path="/lots" element={<Lots />} />

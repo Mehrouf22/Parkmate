@@ -99,13 +99,17 @@ export const DataProvider = ({ children }) => {
         setBookings(bookings.filter(booking => booking.id !== id));
     };
 
+    const updateBooking = (id, updatedBooking) => {
+        setBookings(bookings.map(booking => booking.id === id ? { ...booking, ...updatedBooking } : booking));
+    };
+
 
     const value = {
         users, addUser, updateUser, deleteUser,
         owners, addOwner, updateOwner, deleteOwner,
         services, addService, updateService, deleteService,
         employees, addEmployee, updateEmployee, deleteEmployee,
-        bookings, addBooking, deleteBooking
+        bookings, addBooking, deleteBooking, updateBooking
     };
 
     return (

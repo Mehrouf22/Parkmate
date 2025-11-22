@@ -58,6 +58,7 @@ const UserLogin = () => {
                     Are you a parking lot owner? <Link to="/owner/login">Login here</Link>
                 </p>
                 <p className="auth-footer" style={{ fontSize: '0.8rem', marginTop: '16px' }}>
+                    <Link to="/employee/register" style={{ color: '#64748b', marginRight: '12px' }}>Employee Register</Link>
                     <Link to="/admin/login" style={{ color: '#94a3b8' }}>Admin Access</Link>
                 </p>
             </div>
