@@ -118,3 +118,26 @@
 .owner-theme .btn-primary:hover {
     background: #1e293b;
 }
+
+/* Admin Theme Override */
+.admin-theme {
+    background: #1e293b;
+}
+
+.admin-theme .auth-card {
+    border-top: 4px solid #ef4444;
+    /* Red accent for admin */
+}
+
+.admin-theme .btn-primary {
+    background: #ef4444;
+}
+
+.admin-theme .btn-primary:hover {
+    background: #dc2626;
+}
+
+.admin-theme .form-group input:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}

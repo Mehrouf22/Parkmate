@@ -7,12 +7,14 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [owner, setOwner] = useState(null);
+    const [admin, setAdmin] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         // Check for saved sessions on load
         const savedUser = localStorage.getItem('parkmate_user_session');
         const savedOwner = localStorage.getItem('parkmate_owner_session');
+        const savedAdmin = localStorage.getItem('parkmate_admin_session');
 
         if (savedUser) {
             setUser(JSON.parse(savedUser));
@@ -20,6 +22,10 @@ export const AuthProvider = ({ children }) => {
 
         if (savedOwner) {
             setOwner(JSON.parse(savedOwner));
+        }
+
+        if (savedAdmin) {
+            setAdmin(JSON.parse(savedAdmin));
         }
 
         setLoading(false);
@@ -45,13 +51,26 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('parkmate_owner_session');
     };
 
+    const loginAdmin = (adminData) => {
+        setAdmin(adminData);
+        localStorage.setItem('parkmate_admin_session', JSON.stringify(adminData));
+    };
+
+    const logoutAdmin = () => {
+        setAdmin(null);
+        localStorage.removeItem('parkmate_admin_session');
+    };
+
     const value = {
         user,
         owner,
+        admin,
         loginUser,
         logoutUser,
         loginOwner,
         logoutOwner,
+        loginAdmin,
+        logoutAdmin,
         loading
     };
 

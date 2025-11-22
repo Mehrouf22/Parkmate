@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useAuth } from '../../Context/AuthContext';
+import { useData } from '../../Context/DataContext';
 import './Lot1.scss';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
@@ -16,6 +18,8 @@ function formatRemaining(ms) {
 
 const DynamicLot = () => {
     const { lotId } = useParams();
+    const { user } = useAuth();
+    const { addBooking } = useData();
     const STORAGE_KEY = `parkmate_lot${lotId}_slots`;
 
     const [lotInfo, setLotInfo] = useState(null);
@@ -155,9 +159,23 @@ const DynamicLot = () => {
         if (!ok) return;
         const bookedAt = Date.now();
         const clientId = getClientId();
+
+        // Update local slots state
         setSlots((prev) =>
             prev.map((s) => (s.id === selected ? { ...s, status: 'booked', bookedAt, bookedBy: clientId, vehicleType } : s))
         );
+
+        // Add to global DataContext for Admin visibility
+        addBooking({
+            userId: user ? user.id : 'guest',
+            userName: user ? user.name : 'Guest User',
+            lotName: lotInfo.name,
+            date: new Date().toLocaleDateString(),
+            slotId: selected,
+            vehicleType,
+            paymentMethod: payment
+        });
+
         setSelected(null);
         notify(`Slot #${selected} booked for 1 hour.`);
     };

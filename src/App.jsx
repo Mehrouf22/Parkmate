@@ -13,48 +13,73 @@ import OwnerLots from './Pages/Owner/OwnerLots'
 import OwnerServices from './Pages/Owner/OwnerServices'
 import OwnerBookings from './Pages/Owner/OwnerBookings'
 import OwnerProfile from './Pages/Owner/OwnerProfile'
+import AdminLayout from './Pages/Admin/AdminLayout'
+import AdminDashboard from './Pages/Admin/AdminDashboard'
+import AdminUsers from './Pages/Admin/AdminUsers'
+import AdminOwners from './Pages/Admin/AdminOwners'
+import AdminBookings from './Pages/Admin/AdminBookings'
+import AdminServices from './Pages/Admin/AdminServices'
+import AdminEmployees from './Pages/Admin/AdminEmployees'
 import UserLogin from './Pages/Auth/UserLogin'
 import UserRegister from './Pages/Auth/UserRegister'
 import OwnerLogin from './Pages/Auth/OwnerLogin'
 import OwnerRegister from './Pages/Auth/OwnerRegister'
+import AdminLogin from './Pages/Auth/AdminLogin'
+
+import { DataProvider } from './Context/DataContext'
 
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Navbar />
+      <DataProvider>
+        <BrowserRouter>
+          <Navbar />
 
-        <div className="app-content">
-          <div className="container">
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<UserLand />} />
-              <Route path="/login" element={<UserLogin />} />
-              <Route path="/register" element={<UserRegister />} />
-              <Route path="/owner/login" element={<OwnerLogin />} />
-              <Route path="/owner/register" element={<OwnerRegister />} />
+          <div className="app-content">
+            <div className="container">
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<UserLand />} />
+                <Route path="/login" element={<UserLogin />} />
+                <Route path="/register" element={<UserRegister />} />
+                <Route path="/owner/login" element={<OwnerLogin />} />
+                <Route path="/owner/register" element={<OwnerRegister />} />
+                <Route path="/admin/login" element={<AdminLogin />} />
 
-              <Route path="/lots" element={<Lots />} />
-              <Route path="/lots/:lotId" element={<DynamicLot />} />
-              <Route path="/service" element={<Service />} />
+                <Route path="/lots" element={<Lots />} />
+                <Route path="/lots/:lotId" element={<DynamicLot />} />
+                <Route path="/service" element={<Service />} />
 
-              {/* Protected User Routes (Optional, but good for profile) */}
-              <Route path="/profile" element={<Userprof />} />
+                {/* Protected User Routes (Optional, but good for profile) */}
+                <Route path="/profile" element={<Userprof />} />
 
-              {/* Protected Owner Routes */}
-              <Route element={<ProtectedRoute role="owner" />}>
-                <Route path="/owner" element={<OwnerLayout />}>
-                  <Route index element={<OwnerDashboard />} />
-                  <Route path="lots" element={<OwnerLots />} />
-                  <Route path="bookings" element={<OwnerBookings />} />
-                  <Route path="services" element={<OwnerServices />} />
-                  <Route path="profile" element={<OwnerProfile />} />
+                {/* Protected Owner Routes */}
+                <Route element={<ProtectedRoute role="owner" />}>
+                  <Route path="/owner" element={<OwnerLayout />}>
+                    <Route index element={<OwnerDashboard />} />
+                    <Route path="lots" element={<OwnerLots />} />
+                    <Route path="bookings" element={<OwnerBookings />} />
+                    <Route path="services" element={<OwnerServices />} />
+                    <Route path="profile" element={<OwnerProfile />} />
+                  </Route>
                 </Route>
-              </Route>
-            </Routes>
+
+                {/* Protected Admin Routes */}
+                <Route element={<ProtectedRoute role="admin" />}>
+                  <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="users" element={<AdminUsers />} />
+                    <Route path="owners" element={<AdminOwners />} />
+                    <Route path="bookings" element={<AdminBookings />} />
+                    <Route path="services" element={<AdminServices />} />
+                    <Route path="employees" element={<AdminEmployees />} />
+                  </Route>
+                </Route>
+              </Routes>
+            </div>
           </div>
-        </div>
-      </BrowserRouter>
+        </BrowserRouter>
+      </DataProvider>
     </AuthProvider>
   )
 }

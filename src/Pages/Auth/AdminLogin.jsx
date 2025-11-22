@@ -3,25 +3,27 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../Context/AuthContext'
 import './Auth.scss'
 
-const OwnerLogin = () => {
+const AdminLogin = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const { loginOwner } = useAuth()
+    const { loginAdmin } = useAuth()
     const navigate = useNavigate()
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        if (username && password) {
-            loginOwner({ username, name: 'Owner', role: 'owner' })
-            navigate('/owner')
+        if (username === 'admin' && password === 'admin123') { // Simple hardcoded check for now
+            loginAdmin({ username, name: 'Super Admin', role: 'admin' })
+            navigate('/admin')
+        } else {
+            alert('Invalid credentials (try admin/admin123)')
         }
     }
 
     return (
-        <div className="auth-container owner-theme">
+        <div className="auth-container admin-theme">
             <div className="auth-card">
-                <h2>Owner Portal</h2>
-                <p className="auth-subtitle">Manage your parking business</p>
+                <h2>Admin Portal</h2>
+                <p className="auth-subtitle">System Administration</p>
 
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
@@ -31,7 +33,7 @@ const OwnerLogin = () => {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
-                            placeholder="Enter your username"
+                            placeholder="Enter admin username"
                         />
                     </div>
 
@@ -42,26 +44,21 @@ const OwnerLogin = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            placeholder="Enter password"
+                            placeholder="Enter admin password"
                         />
                     </div>
 
-                    <button type="submit" className="btn-primary full-width">Login to Dashboard</button>
+                    <button type="submit" className="btn-primary full-width">Login to Admin Dashboard</button>
                 </form>
 
-                <p className="auth-footer">
-                    New partner? <Link to="/owner/register">Register Business</Link>
-                </p>
                 <div className="divider">OR</div>
                 <p className="auth-footer">
-                    Looking for parking? <Link to="/login">User Login</Link>
-                </p>
-                <p className="auth-footer" style={{ fontSize: '0.8rem', marginTop: '16px' }}>
-                    <Link to="/admin/login" style={{ color: '#64748b', opacity: 0.7 }}>Admin Access</Link>
+                    <Link to="/login" style={{ marginRight: '15px' }}>User Login</Link>
+                    <Link to="/owner/login">Owner Login</Link>
                 </p>
             </div>
         </div>
     )
 }
 
-export default OwnerLogin
+export default AdminLogin
